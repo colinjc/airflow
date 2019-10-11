@@ -115,6 +115,7 @@ class ConfTest(unittest.TestCase):
 
     def test_conf_as_dict(self):
         os.environ['AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__TESTSECTION__TESTKEY'] = 'nested'
+        os.environ['AIRFLOW__KUBERNETES_SECRETS__AIRFLOW__TESTSECTION__TESTKEY'] = 'nested'
         cfg_dict = conf.as_dict()
 
         # test that configs are picked up
@@ -128,6 +129,12 @@ class ConfTest(unittest.TestCase):
             cfg_dict['kubernetes_environment_variables']['AIRFLOW__TESTSECTION__TESTKEY'],
             '< hidden >')
         del os.environ['AIRFLOW__KUBERNETES_ENVIRONMENT_VARIABLES__AIRFLOW__TESTSECTION__TESTKEY']
+
+        self.assertEqual(cfg_dict['testsection']['testkey'], '< hidden >')
+        self.assertEqual(
+            cfg_dict['kubernetes_secrets']['AIRFLOW__TESTSECTION__TESTKEY'],
+            '< hidden >')
+        del os.environ['AIRFLOW__KUBERNETES_SECRETS__AIRFLOW__TESTSECTION__TESTKEY']
 
     def test_conf_as_dict_source(self):
         # test display_source
